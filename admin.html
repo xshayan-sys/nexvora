@@ -84,6 +84,11 @@
             color: var(--ink)
         }
 
+        .danger {
+            border-color: #ff7777;
+            color: #ff9d9d
+        }
+
         main {
             padding: 60px 0 100px
         }
@@ -101,6 +106,10 @@
             line-height: .95;
             letter-spacing: -.07em;
             margin: 12px 0
+        }
+
+        h2 {
+            letter-spacing: -.05em
         }
 
         .muted,
@@ -206,12 +215,8 @@
 
         .actions {
             display: flex;
-            gap: 8px
-        }
-
-        .danger {
-            border-color: #ff7777;
-            color: #ff9d9d
+            gap: 8px;
+            flex-wrap: wrap
         }
 
         .logout {
@@ -233,10 +238,6 @@
                 align-items: flex-start;
                 flex-direction: column
             }
-
-            .actions {
-                flex-wrap: wrap
-            }
         }
     </style>
 </head>
@@ -248,28 +249,24 @@
         </div>
     </header>
     <main class="wrap">
-        <section id="auth"><span class="eyebrow">Private workspace</span>
-            <h1 id="auth-title">Set your admin password.</h1>
-            <p class="muted" id="auth-copy">Create a password to manage portfolio projects from this browser.</p>
-            <form class="panel" id="auth-form">
-                <div class="field"><label>Password</label><input id="password" type="password" minlength="8" required
-                        placeholder="At least 8 characters"></div>
-                <div class="field hidden" id="confirm-wrap"><label>Confirm password</label><input id="confirm"
-                        type="password" minlength="8" placeholder="Repeat password"></div><button class="btn primary"
-                    id="auth-button">Create password</button>
-                <p class="message" id="auth-message"></p>
+        <section id="login"><span class="eyebrow">Private workspace</span>
+            <h1>Admin access.</h1>
+            <p class="muted">Enter the private passcode to manage nexvorai projects.</p>
+            <form class="panel" id="login-form">
+                <div class="field"><label for="password">Passcode</label><input id="password" type="password"
+                        autocomplete="current-password" required placeholder="Enter passcode"></div><button
+                    class="btn primary">Unlock panel</button>
+                <p class="message" id="login-message"></p>
             </form>
-            <p class="hint">The public website does not show a link to this panel. Keep the direct admin URL private.
-            </p>
+            <p class="hint">Password creation is disabled. Only the configured passcode can unlock this panel.</p>
         </section>
         <section id="dashboard" class="hidden"><span class="eyebrow">Content manager</span>
-            <h1>Add work in seconds.</h1>
-            <p class="muted">Add a title, category and direct hosted MP4 URL. The project will appear in the public Work
-                section after refresh.</p>
-            <div class="notice">This static version saves projects in browser storage. For real multi-device publishing
-                and security, connect a backend.</div>
+            <h1>Manage your work.</h1>
+            <p class="muted">Add, edit or remove projects from the public portfolio.</p>
+            <div class="notice">Use a direct hosted MP4 URL. Changes are stored in this browser and appear on the public
+                page after refresh.</div>
             <form class="panel" id="project-form">
-                <h2>New project</h2>
+                <h2 id="form-title">New project</h2>
                 <div class="form-grid">
                     <div class="field"><label>Project title</label><input name="title" required
                             placeholder="After Hours"></div>
@@ -283,7 +280,8 @@
                         </select></div>
                     <div class="field"><label>Hosted video URL</label><input name="url" type="url" required
                             placeholder="https://your-cdn.com/video.mp4"></div>
-                </div><button class="btn primary">Add project ↗</button>
+                </div><button class="btn primary" id="save-button">Add project ↗</button><button class="btn hidden"
+                    type="button" id="cancel-edit">Cancel edit</button>
                 <p class="message" id="project-message"></p>
             </form>
             <div class="toolbar">
@@ -293,7 +291,7 @@
         </section>
     </main>
     <script>
-        const key = 'nexvoraiProjects', hashKey = 'nexvoraiAdminHash', sessionKey = 'nexvoraiAdminSession', seed = [{ title: 'After Hours', client: 'A night in motion', category: 'Social', g: 'g1', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4' }, { title: 'Made to Move', client: 'Launch story / 60 sec', category: 'Brand Film', g: 'g2', url: 'https://media.w3.org/2010/05/bunny/trailer.mp4' }, { title: 'The Daily Cut', client: 'Creator content system', category: 'Creator', g: 'g3', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' }, { title: 'Signal / Noise', client: 'Motion identity', category: 'Motion', g: 'g4', url: 'https://media.w3.org/2010/05/video/movie_300.mp4' }]; const $ = s => document.querySelector(s); function get() { try { const p = JSON.parse(localStorage.getItem(key)); return Array.isArray(p) && p.length ? p : seed } catch { return seed } } async function digest(t) { if (crypto.subtle) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('') } return btoa(unescape(encodeURIComponent(t))) } function dashboard() { $('#auth').classList.add('hidden'); $('#dashboard').classList.remove('hidden'); list() } function list() { const p = get(); $('#project-list').innerHTML = p.map((x, i) => `<div class="item"><div><h3>${x.title}</h3><p>${x.client} · ${x.category}</p></div><div class="actions"><a class="btn" href="${x.url}" target="_blank" rel="noopener">Preview ↗</a><button class="btn danger" data-del="${i}">Delete</button></div></div>`).join('') } async function init() { if (localStorage.getItem(hashKey) && sessionStorage.getItem(sessionKey) === '1') { dashboard(); return } if (localStorage.getItem(hashKey)) { $('#auth-title').textContent = 'Welcome back.'; $('#auth-copy').textContent = 'Enter your password to manage the nexvorai portfolio.'; $('#auth-button').textContent = 'Unlock panel' } else $('#confirm-wrap').classList.remove('hidden'); $('#auth-form').onsubmit = async e => { e.preventDefault(); const pass = $('#password').value, msg = $('#auth-message'); if (localStorage.getItem(hashKey)) { if (await digest(pass) !== localStorage.getItem(hashKey)) { msg.textContent = 'Incorrect password.'; return } sessionStorage.setItem(sessionKey, '1'); dashboard() } else { if (pass.length < 8 || pass !== $('#confirm').value) { msg.textContent = 'Passwords must match and be at least 8 characters.'; return } localStorage.setItem(hashKey, await digest(pass)); sessionStorage.setItem(sessionKey, '1'); dashboard() } } } $('#project-form').onsubmit = e => { e.preventDefault(); const f = new FormData(e.target), p = get(); p.push({ title: f.get('title').trim(), client: f.get('client').trim(), category: f.get('category'), g: ['g1', 'g2', 'g3', 'g4'][p.length % 4], url: f.get('url').trim() }); localStorage.setItem(key, JSON.stringify(p)); e.target.reset(); $('#project-message').textContent = 'Project added. Refresh the public site to see it.'; list() }; $('#project-list').onclick = e => { const b = e.target.closest('[data-del]'); if (!b) return; const p = get(); if (confirm(`Delete “${p[+b.dataset.del].title}”?`)) { p.splice(+b.dataset.del, 1); localStorage.setItem(key, JSON.stringify(p)); list() } }; $('#logout').onclick = () => { sessionStorage.removeItem(sessionKey); location.reload() }; init();
+        const EXPECTED_HASH = '394ffc65951343cb8a5db0e31c4bb020250ea6ca9afc0f949d8c2fa0944e8b96', KEY = 'nexvoraiProjects', SESSION = 'nexvoraiAdminSessionV2', seed = [{title: 'After Hours', client: 'A night in motion', category: 'Social', g: 'g1', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4'}, {title: 'Made to Move', client: 'Launch story / 60 sec', category: 'Brand Film', g: 'g2', url: 'https://media.w3.org/2010/05/bunny/trailer.mp4'}, {title: 'The Daily Cut', client: 'Creator content system', category: 'Creator', g: 'g3', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'}, {title: 'Signal / Noise', client: 'Motion identity', category: 'Motion', g: 'g4', url: 'https://media.w3.org/2010/05/video/movie_300.mp4'}]; const $ = s => document.querySelector(s); let editing = -1; function get() {try {const p = JSON.parse(localStorage.getItem(KEY)); return Array.isArray(p) && p.length ? p : seed} catch {return seed} } async function hash(t) {const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('')} function show() {$('#login').classList.add('hidden'); $('#dashboard').classList.remove('hidden'); list()} function list() {const p = get(); $('#project-list').innerHTML = p.map((x, i) => `<div class="item"><div><h3>${x.title}</h3><p>${x.client} · ${x.category}</p></div><div class="actions"><a class="btn" href="${x.url}" target="_blank" rel="noopener">Preview ↗</a><button class="btn" data-edit="${i}">Edit</button><button class="btn danger" data-delete="${i}">Delete</button></div></div>`).join('')} $('#login-form').onsubmit = async e => {e.preventDefault(); if (await hash($('#password').value) !== EXPECTED_HASH) {$('#login-message').textContent = 'Incorrect passcode.'; return } sessionStorage.setItem(SESSION, '1'); show()}; $('#project-form').onsubmit = e => {e.preventDefault(); const f = new FormData(e.target), p = get(), item = {title: f.get('title').trim(), client: f.get('client').trim(), category: f.get('category'), g: ['g1', 'g2', 'g3', 'g4'][Math.max(0, editing < 0 ? p.length : editing) % 4], url: f.get('url').trim()}; if (editing < 0) p.push(item); else p[editing] = item; localStorage.setItem(KEY, JSON.stringify(p)); e.target.reset(); editing = -1; $('#form-title').textContent = 'New project'; $('#save-button').textContent = 'Add project ↗'; $('#cancel-edit').classList.add('hidden'); $('#project-message').textContent = 'Project saved. Refresh the public site to see the update.'; list()}; $('#project-list').onclick = e => {const edit = e.target.closest('[data-edit]'), del = e.target.closest('[data-delete]'), p = get(); if (edit) {const x = p[+edit.dataset.edit], f = $('#project-form'); f.title.value = x.title; f.client.value = x.client; f.category.value = x.category; f.url.value = x.url; editing = +edit.dataset.edit; $('#form-title').textContent = 'Edit project'; $('#save-button').textContent = 'Save changes ↗'; $('#cancel-edit').classList.remove('hidden'); scrollTo({top: 0, behavior: 'smooth'})} if (del && confirm(`Delete “${p[+del.dataset.delete].title}”?`)) {p.splice(+del.dataset.delete, 1); localStorage.setItem(KEY, JSON.stringify(p)); list()} }; $('#cancel-edit').onclick = () => {editing = -1; $('#project-form').reset(); $('#form-title').textContent = 'New project'; $('#save-button').textContent = 'Add project ↗'; $('#cancel-edit').classList.add('hidden')}; $('#logout').onclick = () => {sessionStorage.removeItem(SESSION); location.reload()}; if (sessionStorage.getItem(SESSION) === '1') show();
     </script>
 </body>
 
