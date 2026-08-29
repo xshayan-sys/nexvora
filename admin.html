@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>nexvorai Admin</title>
+    <style>
+        :root {
+            --lime: #c1ff00;
+            --ink: #090b16;
+            --panel: #111525;
+            --muted: #9da3bb;
+            --line: #fff2;
+            --white: #f8f9ff
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--ink);
+            color: var(--white);
+            font-family: Inter, system-ui, sans-serif
+        }
+
+        .wrap {
+            width: min(calc(100% - 32px), 960px);
+            margin: auto
+        }
+
+        .top {
+            padding: 21px 0;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 950
+        }
+
+        .mark {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px 11px 11px 2px;
+            background: var(--lime);
+            transform: rotate(-8deg);
+            overflow: hidden
+        }
+
+        .mark img {
+            width: 25px;
+            height: 25px
+        }
+
+        .btn {
+            min-height: 42px;
+            padding: 0 16px;
+            border: 1px solid var(--line);
+            border-radius: 99px;
+            background: none;
+            color: white;
+            font-weight: 900;
+            cursor: pointer
+        }
+
+        .primary {
+            background: var(--lime);
+            border-color: var(--lime);
+            color: var(--ink)
+        }
+
+        main {
+            padding: 60px 0 100px
+        }
+
+        .eyebrow {
+            color: var(--lime);
+            font-size: .7rem;
+            font-weight: 900;
+            letter-spacing: .17em;
+            text-transform: uppercase
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            line-height: .95;
+            letter-spacing: -.07em;
+            margin: 12px 0
+        }
+
+        .muted,
+        .hint {
+            color: var(--muted)
+        }
+
+        .panel {
+            margin-top: 28px;
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: #ffffff06
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+            margin-bottom: 14px
+        }
+
+        .field label {
+            color: var(--muted);
+            font-size: .77rem;
+            font-weight: 800
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #0d1020;
+            color: white;
+            outline: 0
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: var(--lime)
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        .message {
+            min-height: 20px;
+            color: var(--lime);
+            font-size: .82rem
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .notice {
+            padding: 14px;
+            border-radius: 12px;
+            background: #2538e526;
+            border: 1px solid #2538e5;
+            color: #dce0ff;
+            font-size: .82rem
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 48px
+        }
+
+        .list {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: var(--panel)
+        }
+
+        .item h3 {
+            margin: 0 0 5px;
+            font-size: 1rem
+        }
+
+        .item p {
+            margin: 0;
+            color: var(--muted);
+            font-size: .8rem
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px
+        }
+
+        .danger {
+            border-color: #ff7777;
+            color: #ff9d9d
+        }
+
+        .logout {
+            color: var(--muted);
+            cursor: pointer
+        }
+
+        .logout:hover {
+            color: var(--lime)
+        }
+
+        @media(max-width:650px) {
+            .form-grid {
+                grid-template-columns: 1fr
+            }
+
+            .item,
+            .toolbar {
+                align-items: flex-start;
+                flex-direction: column
+            }
+
+            .actions {
+                flex-wrap: wrap
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top">
+        <div class="wrap nav"><a class="brand" href="index.html"><span class="mark"><img src="assets/logo.svg"
+                        alt=""></span><span>nexvorai / admin</span></a><a class="btn" href="index.html">View site ↗</a>
+        </div>
+    </header>
+    <main class="wrap">
+        <section id="auth"><span class="eyebrow">Private workspace</span>
+            <h1 id="auth-title">Set your admin password.</h1>
+            <p class="muted" id="auth-copy">Create a password to manage portfolio projects from this browser.</p>
+            <form class="panel" id="auth-form">
+                <div class="field"><label>Password</label><input id="password" type="password" minlength="8" required
+                        placeholder="At least 8 characters"></div>
+                <div class="field hidden" id="confirm-wrap"><label>Confirm password</label><input id="confirm"
+                        type="password" minlength="8" placeholder="Repeat password"></div><button class="btn primary"
+                    id="auth-button">Create password</button>
+                <p class="message" id="auth-message"></p>
+            </form>
+            <p class="hint">The public website does not show a link to this panel. Keep the direct admin URL private.
+            </p>
+        </section>
+        <section id="dashboard" class="hidden"><span class="eyebrow">Content manager</span>
+            <h1>Add work in seconds.</h1>
+            <p class="muted">Add a title, category and direct hosted MP4 URL. The project will appear in the public Work
+                section after refresh.</p>
+            <div class="notice">This static version saves projects in browser storage. For real multi-device publishing
+                and security, connect a backend.</div>
+            <form class="panel" id="project-form">
+                <h2>New project</h2>
+                <div class="form-grid">
+                    <div class="field"><label>Project title</label><input name="title" required
+                            placeholder="After Hours"></div>
+                    <div class="field"><label>Client or descriptor</label><input name="client" required
+                            placeholder="A night in motion"></div>
+                    <div class="field"><label>Category</label><select name="category">
+                            <option>Social</option>
+                            <option>Brand Film</option>
+                            <option>Motion</option>
+                            <option>Creator</option>
+                        </select></div>
+                    <div class="field"><label>Hosted video URL</label><input name="url" type="url" required
+                            placeholder="https://your-cdn.com/video.mp4"></div>
+                </div><button class="btn primary">Add project ↗</button>
+                <p class="message" id="project-message"></p>
+            </form>
+            <div class="toolbar">
+                <h2>Current projects</h2><span class="logout" id="logout">Log out</span>
+            </div>
+            <div class="list" id="project-list"></div>
+        </section>
+    </main>
+    <script>
+        const key = 'nexvoraiProjects', hashKey = 'nexvoraiAdminHash', sessionKey = 'nexvoraiAdminSession', seed = [{ title: 'After Hours', client: 'A night in motion', category: 'Social', g: 'g1', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4' }, { title: 'Made to Move', client: 'Launch story / 60 sec', category: 'Brand Film', g: 'g2', url: 'https://media.w3.org/2010/05/bunny/trailer.mp4' }, { title: 'The Daily Cut', client: 'Creator content system', category: 'Creator', g: 'g3', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' }, { title: 'Signal / Noise', client: 'Motion identity', category: 'Motion', g: 'g4', url: 'https://media.w3.org/2010/05/video/movie_300.mp4' }]; const $ = s => document.querySelector(s); function get() { try { const p = JSON.parse(localStorage.getItem(key)); return Array.isArray(p) && p.length ? p : seed } catch { return seed } } async function digest(t) { if (crypto.subtle) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('') } return btoa(unescape(encodeURIComponent(t))) } function dashboard() { $('#auth').classList.add('hidden'); $('#dashboard').classList.remove('hidden'); list() } function list() { const p = get(); $('#project-list').innerHTML = p.map((x, i) => `<div class="item"><div><h3>${x.title}</h3><p>${x.client} · ${x.category}</p></div><div class="actions"><a class="btn" href="${x.url}" target="_blank" rel="noopener">Preview ↗</a><button class="btn danger" data-del="${i}">Delete</button></div></div>`).join('') } async function init() { if (localStorage.getItem(hashKey) && sessionStorage.getItem(sessionKey) === '1') { dashboard(); return } if (localStorage.getItem(hashKey)) { $('#auth-title').textContent = 'Welcome back.'; $('#auth-copy').textContent = 'Enter your password to manage the nexvorai portfolio.'; $('#auth-button').textContent = 'Unlock panel' } else $('#confirm-wrap').classList.remove('hidden'); $('#auth-form').onsubmit = async e => { e.preventDefault(); const pass = $('#password').value, msg = $('#auth-message'); if (localStorage.getItem(hashKey)) { if (await digest(pass) !== localStorage.getItem(hashKey)) { msg.textContent = 'Incorrect password.'; return } sessionStorage.setItem(sessionKey, '1'); dashboard() } else { if (pass.length < 8 || pass !== $('#confirm').value) { msg.textContent = 'Passwords must match and be at least 8 characters.'; return } localStorage.setItem(hashKey, await digest(pass)); sessionStorage.setItem(sessionKey, '1'); dashboard() } } } $('#project-form').onsubmit = e => { e.preventDefault(); const f = new FormData(e.target), p = get(); p.push({ title: f.get('title').trim(), client: f.get('client').trim(), category: f.get('category'), g: ['g1', 'g2', 'g3', 'g4'][p.length % 4], url: f.get('url').trim() }); localStorage.setItem(key, JSON.stringify(p)); e.target.reset(); $('#project-message').textContent = 'Project added. Refresh the public site to see it.'; list() }; $('#project-list').onclick = e => { const b = e.target.closest('[data-del]'); if (!b) return; const p = get(); if (confirm(`Delete “${p[+b.dataset.del].title}”?`)) { p.splice(+b.dataset.del, 1); localStorage.setItem(key, JSON.stringify(p)); list() } }; $('#logout').onclick = () => { sessionStorage.removeItem(sessionKey); location.reload() }; init();
+    </script>
+</body>
+
+</html>
