@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<link rel="shortcut icon" href="/" type="image/x-icon">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,7 +13,7 @@
             --bg: #090b16;
             --p: #111525;
             --m: #9da3bb;
-            --line: #ffffff1f;
+            --line: #fff2;
             --w: #f8f9ff;
             --max: 1160px
         }
@@ -195,7 +195,7 @@
         }
 
         .hero {
-            min-height: 780px;
+            min-height: 740px;
             padding: 170px 0 85px;
             display: grid;
             align-items: center;
@@ -237,8 +237,7 @@
 
         .artbox {
             height: 500px;
-            position: relative;
-            transition: .25s
+            position: relative
         }
 
         .art {
@@ -248,7 +247,7 @@
             overflow: hidden
         }
 
-        .art-main {
+        .main {
             width: 68%;
             height: 75%;
             right: 2%;
@@ -259,7 +258,7 @@
             animation: float 7s ease-in-out infinite
         }
 
-        .art-main:before {
+        .main:before {
             content: "PLAY\A LOUD";
             white-space: pre;
             position: absolute;
@@ -273,7 +272,7 @@
             text-align: right
         }
 
-        .art-main:after {
+        .main:after {
             content: "";
             position: absolute;
             width: 130%;
@@ -284,7 +283,7 @@
             transform: rotate(-18deg)
         }
 
-        .art-side {
+        .side {
             width: 38%;
             height: 43%;
             left: 0;
@@ -297,14 +296,14 @@
             animation: float2 6s ease-in-out infinite
         }
 
-        .art-side strong {
+        .side strong {
             display: block;
             margin-top: 25px;
             font-size: 4rem;
             line-height: .8
         }
 
-        .art-pill {
+        .pill {
             right: 0;
             top: 0;
             width: 108px;
@@ -322,7 +321,7 @@
             animation: pulse 3s infinite
         }
 
-        .art-pill:before {
+        .pill:before {
             content: "↗";
             display: block;
             font-size: 1.9rem
@@ -449,14 +448,7 @@
             height: 7px;
             border-radius: 50%;
             background: var(--l);
-            margin-right: 7px;
-            animation: blink 1.4s infinite
-        }
-
-        @keyframes blink {
-            50% {
-                opacity: .3
-            }
+            margin-right: 7px
         }
 
         .statgrid {
@@ -1021,8 +1013,8 @@
         <div class="wrap nav"><a class="brand" href="#top"><span class="mark"><img src="assets/logo.svg"
                         alt="nexvorai logo"></span><span>nexvorai</span></a>
             <nav class="links" id="nav"><a href="#work">Work</a><a href="#services">Services</a><a
-                    href="#process">Process</a><a href="#contact">Contact</a></nav><button class="toggle" id="toggle"
-                aria-label="Open menu">☰</button><a class="btn primary small" href="#contact">Start a project ↗</a>
+                    href="#process">Process</a><a href="#contact">Contact</a></nav><button class="toggle"
+                id="toggle">☰</button><a class="btn primary small" href="#contact">Start a project ↗</a>
         </div>
     </header>
     <main id="top">
@@ -1181,8 +1173,10 @@
             <div class="modal-content" id="modal-meta"></div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script>
-        const seed = [{title: 'After Hours', client: 'A night in motion', category: 'Social', g: 'g1', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4'}, {title: 'Made to Move', client: 'Launch story / 60 sec', category: 'Brand Film', g: 'g2', url: 'https://media.w3.org/2010/05/bunny/trailer.mp4'}, {title: 'The Daily Cut', client: 'Creator content system', category: 'Creator', g: 'g3', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'}, {title: 'Signal / Noise', client: 'Motion identity', category: 'Motion', g: 'g4', url: 'https://media.w3.org/2010/05/video/movie_300.mp4'}], key = 'nexvoraiProjects'; function get() {try {const p = JSON.parse(localStorage.getItem(key)); return Array.isArray(p) && p.length ? p : seed} catch {return seed} } let projects = get(), active = 'All', grid = document.querySelector('#grid'), filters = document.querySelector('#filters'); function filterUI() {const c = ['All', ...new Set(projects.map(p => p.category))]; filters.innerHTML = c.map(x => `<button class="filter ${x === active ? 'active' : ''}" data-filter="${x}">${x}</button>`).join('')} function render() {const list = projects.filter(p => active === 'All' || p.category === active); grid.innerHTML = list.map((p, i) => `<article class="card reveal"><div class="media"><div class="gradient ${p.g || 'g1'}"></div><span class="tag">${p.category}</span><video src="${p.url}" muted loop playsinline preload="metadata"></video><button class="play" data-i="${projects.indexOf(p)}" aria-label="Play ${p.title}">▶</button></div><div class="body"><div><h3>${p.title}</h3><p>${p.client}</p></div><span class="type">${String(i + 1).padStart(2, '0')}</span></div></article>`).join(''); grid.querySelectorAll('video').forEach(v => {v.onmouseenter = () => v.play().catch(() => { }); v.onmouseleave = () => {v.pause(); v.currentTime = 0}}); grid.querySelectorAll('.play').forEach(b => b.onclick = () => open(projects[+b.dataset.i])); observe()} filters.onclick = e => {const b = e.target.closest('[data-filter]'); if (!b) return; active = b.dataset.filter; filterUI(); render()}; const back = document.querySelector('#backdrop'), mv = document.querySelector('#modal-video'); function open(p) {document.querySelector('#modal-title').textContent = p.title; document.querySelector('#modal-meta').textContent = `${p.client} · ${p.category}`; mv.src = p.url; back.classList.add('open'); mv.play().catch(() => { })} function close() {mv.pause(); mv.removeAttribute('src'); mv.load(); back.classList.remove('open')} document.querySelector('#close').onclick = close; back.onclick = e => {if (e.target === back) close()}; document.onkeydown = e => {if (e.key === 'Escape') close()}; const observer = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {if (e.isIntersecting) {e.target.classList.add('show'); observer.unobserve(e.target)} }), {threshold: .12}) : null; function observe() {document.querySelectorAll('.reveal:not(.show)').forEach(e => observer ? observer.observe(e) : e.classList.add('show'))} const co = new IntersectionObserver(es => es.forEach(e => {if (e.isIntersecting) {const el = e.target, t = +el.dataset.target, s = el.dataset.suffix; let n = 0; const tick = () => {n = Math.min(t, n + Math.max(1, Math.ceil(t / 55))); el.textContent = n.toLocaleString() + s; if (n < t) requestAnimationFrame(tick)}; requestAnimationFrame(tick); co.unobserve(el)} }), {threshold: .4}); document.querySelectorAll('.count').forEach(e => co.observe(e)); document.querySelector('#toggle').onclick = () => document.querySelector('#nav').classList.toggle('open'); addEventListener('scroll', () => document.querySelector('#header').classList.toggle('scrolled', scrollY > 20), {passive: true}); document.querySelector('#contact-form').onsubmit = e => {e.preventDefault(); location.href = `mailto:hello@nexvorai.com?subject=${encodeURIComponent('Project brief from ' + name.value)}&body=${encodeURIComponent('Name: ' + name.value + '\nEmail: ' + email.value + '\n\nBrief:\n' + brief.value)}`}; document.querySelector('#year').textContent = new Date().getFullYear(); filterUI(); render(); observe();
+        const seed = [{ title: 'After Hours', client: 'A night in motion', category: 'Social', g: 'g1', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4' }, { title: 'Made to Move', client: 'Launch story / 60 sec', category: 'Brand Film', g: 'g2', url: 'https://media.w3.org/2010/05/bunny/trailer.mp4' }, { title: 'The Daily Cut', client: 'Creator content system', category: 'Creator', g: 'g3', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' }, { title: 'Signal / Noise', client: 'Motion identity', category: 'Motion', g: 'g4', url: 'https://media.w3.org/2010/05/video/movie_300.mp4' }]; const ready = window.supabase && SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_'); const db = ready ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null; let projects = seed, active = 'All'; const grid = document.querySelector('#grid'), filters = document.querySelector('#filters'); async function getProjects() { if (!db) return seed; const { data } = await db.from('projects').select('*').order('created_at', { ascending: false }); return data?.length ? data.map((p, i) => ({ ...p, url: p.video_url, g: ['g1', 'g2', 'g3', 'g4'][i % 4] })) : seed } function filterUI() { const cats = ['All', ...new Set(projects.map(p => p.category))]; filters.innerHTML = cats.map(c => `<button class="filter ${c === active ? 'active' : ''}" data-filter="${c}">${c}</button>`).join('') } function render() { const list = projects.filter(p => active === 'All' || p.category === active); grid.innerHTML = list.map((p, i) => `<article class="card reveal"><div class="media"><div class="gradient ${p.g || 'g1'}"></div><span class="tag">${p.category}</span><video src="${p.url}" muted loop playsinline preload="metadata"></video><button class="play" data-i="${projects.indexOf(p)}" aria-label="Play ${p.title}">▶</button></div><div class="body"><div><h3>${p.title}</h3><p>${p.client}</p></div><span class="type">${String(i + 1).padStart(2, '0')}</span></div></article>`).join(''); grid.querySelectorAll('video').forEach(v => { v.onmouseenter = () => v.play().catch(() => { }); v.onmouseleave = () => { v.pause(); v.currentTime = 0 } }); grid.querySelectorAll('.play').forEach(b => b.onclick = () => open(projects[+b.dataset.i])); observe() } filters.onclick = e => { const b = e.target.closest('[data-filter]'); if (!b) return; active = b.dataset.filter; filterUI(); render() }; const back = document.querySelector('#backdrop'), mv = document.querySelector('#modal-video'); function open(p) { document.querySelector('#modal-title').textContent = p.title; document.querySelector('#modal-meta').textContent = `${p.client} · ${p.category}`; mv.src = p.url; back.classList.add('open'); mv.play().catch(() => { }) } function close() { mv.pause(); mv.removeAttribute('src'); mv.load(); back.classList.remove('open') } document.querySelector('#close').onclick = close; back.onclick = e => { if (e.target === back) close() }; document.onkeydown = e => { if (e.key === 'Escape') close() }; const observer = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); observer.unobserve(e.target) } }), { threshold: .12 }) : null; function observe() { document.querySelectorAll('.reveal:not(.show)').forEach(e => observer ? observer.observe(e) : e.classList.add('show')) } const co = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const el = e.target, t = +el.dataset.target, s = el.dataset.suffix; let n = 0; const tick = () => { n = Math.min(t, n + Math.max(1, Math.ceil(t / 55))); el.textContent = n.toLocaleString() + s; if (n < t) requestAnimationFrame(tick) }; requestAnimationFrame(tick); co.unobserve(el) } }), { threshold: .4 }); document.querySelectorAll('.count').forEach(e => co.observe(e)); document.querySelector('#toggle').onclick = () => document.querySelector('#nav').classList.toggle('open'); addEventListener('scroll', () => document.querySelector('#header').classList.toggle('scrolled', scrollY > 20), { passive: true }); document.querySelector('#contact-form').onsubmit = e => { e.preventDefault(); location.href = `mailto:hello@nexvorai.com?subject=${encodeURIComponent('Project brief from ' + name.value)}&body=${encodeURIComponent('Name: ' + name.value + '\nEmail: ' + email.value + '\n\nBrief:\n' + brief.value)}` }; document.querySelector('#year').textContent = new Date().getFullYear(); (async () => { projects = await getProjects(); filterUI(); render(); observe() })();
     </script>
 </body>
 
